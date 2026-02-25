@@ -4,7 +4,7 @@ A JavaScript calculator for figure skating programs under ISU IJS (International
 
 ## Features
 
-- **Complete Japanese UI**: All interface elements are localized in Japanese
+- **Complete English UI**: All interface elements are localized in English
 - **2025-26 Season Scale of Values**: Uses official ISU Communication 2707 data
 - **5-Rotation Jump Support**: Automatically supports 5T, 5S, 5Lo, 5F, 5Lz based on JSON data
 - **Dynamic Element Validation**: Rotation counts are dynamically enabled/disabled based on available elements
@@ -62,7 +62,6 @@ To update to a new ISU season:
 
 - Modern browsers with ES6+ support
 - Mobile-responsive design with Bootstrap 4
-- Japanese font rendering with Noto Sans JP fallback
 
 ## License
 
