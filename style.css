@@ -17,7 +17,7 @@ div {
 body {
   padding: 10px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
-  background: #f8f9fa; /* 明るい背景で軽いカード感を強調 */
+  background: #f8f9fa; /* Light background to emphasize a subtle card-like feel */
 }
 
 #goeDisplay{
@@ -65,8 +65,8 @@ hr{
   font-weight: 500;
 }
 
-/* スマホ表示用最小改修 */
-/* タイトル1行固定 */
+/* Minimal adjustments for mobile display */
+/* Keep title to one line */
 h1 {
   font-size: clamp(1.2rem, 5vw, 2rem);
   white-space: nowrap;
@@ -74,7 +74,7 @@ h1 {
   text-overflow: ellipsis;
 }
 
-/* タブを1行で収める */
+/* Keep tabs on a single line */
 .nav-tabs {
   overflow-x: hidden;
 }
@@ -88,7 +88,7 @@ h1 {
   font-size: 14px;
 }
 
-/* 極小端末でさらに詰める */
+/* Tighter spacing for very small devices */
 @media (max-width: 360px) {
   .nav-tabs .nav-link { 
     font-size: 13px; 
@@ -96,14 +96,14 @@ h1 {
   }
 }
 
-/* はみ出し防止 */
+/* Prevent overflow */
 img, table { 
   max-width: 100%; 
   height: auto; 
 }
 
-/* --- 新UIライクな見た目（Bootstrap4のまま） --- */
-/* タブ内全体をカード風に */
+/* --- New UI-like appearance (still Bootstrap 4) --- */
+/* Make tab content look like cards */
 .tab-content > .tab-pane {
   background: #ffffff;
   border-radius: 12px;
@@ -112,7 +112,7 @@ img, table {
   margin-top: 8px;
 }
 
-/* タブをピル風に簡易調整 */
+/* Make tabs pill-shaped (simple adjustment) */
 .nav-tabs .nav-link {
   border-radius: 999px;
   border: none;
@@ -122,12 +122,12 @@ img, table {
   color: #fff !important;
 }
 
-/* GOEスライダー用バッジの視認性 */
+/* Improve badge readability for GOE slider */
 .goe-sel .badge {
   font-variant-numeric: tabular-nums;
 }
 
-/* スコア表をスクロールしやすく（ヘッダ固定） */
+/* Make score table scrollable with sticky header */
 .table-container {
   background: #fff;
   border-radius: 12px;
@@ -143,12 +143,12 @@ img, table {
   z-index: 1;
 }
 
-/* 余白の密度調整 */
+/* Adjust spacing density */
 .goe-sel input[type="range"]{
   margin-top: 6px;
 }
 
-/* 右カラムの合計カード風（既存の配置を崩さず） */
+/* Right column totals styled as cards (without changing layout) */
 #tes-box, #pcs-box, #tss-box{
   background: #fff;
   border-radius: 10px;
@@ -156,7 +156,7 @@ img, table {
   padding: 8px 12px;
 }
 
-/* GOEボタンを複数行に折り返し、均等に配置 */
+/* Allow GOE buttons to wrap and distribute evenly */
 .goe-buttons {
   display: flex;
   flex-wrap: wrap;
