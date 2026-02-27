@@ -1,9 +1,9 @@
 // basevalues.js - ESM JSON Adapter for ISU SOV 2025-26
-// ES Modules版として完全リニューアル
+// Fully redesigned as ES Modules
 
 let SOV = null;
 
-// 非同期初期化関数
+// Async initialization function
 export async function initSOV() {
   if (SOV) return;
   
@@ -24,7 +24,7 @@ export async function initSOV() {
   }
 }
 
-// SOV API関数
+// SOV API functions
 export function getBase(code) {
   const e = SOV?.elements?.[code];
   if (!e) throw new Error(`Unknown element code: ${code}`);
@@ -45,7 +45,7 @@ export function getScore(code, goe) {
   return Math.round(v * 100) / 100;
 }
 
-// 5回転対応：指定した素ジャンプで利用可能な回転数を返す
+// 5-rotation support: return available rotation counts for the specified base jump
 export function getAvailableRotationsFor(baseJump) {
   if (!SOV?.elements) return [];
   const exist = new Set(Object.keys(SOV.elements));
@@ -61,14 +61,14 @@ export function getAvailableRotationsFor(baseJump) {
   return rot;
 }
 
-// 既存のbasevaluesオブジェクト互換性（レガシー対応）
+// Compatibility with existing `basevalues` object (legacy support)
 export const basevalues = new Proxy({}, {
   get(target, prop) {
     if (!SOV) {
       throw new Error('SOV data not loaded. Call initSOV() first.');
     }
     
-    // ジャンプ要素 (配列形式でアクセス)
+    // Jump elements (accessible as an array)
     if (['A', 'T', 'S', 'Lo', 'F', 'Lz', 'Eu'].includes(prop)) {
       return new Proxy([], {
         get(target, index) {
@@ -91,7 +91,7 @@ export const basevalues = new Proxy({}, {
       });
     }
     
-    // ChSq（コレオシーケンス）配列形式
+    // ChSq (choreographic sequence) array form
     if (prop === 'ChSq') {
       return new Proxy([], {
         get(target, index) {
@@ -108,7 +108,7 @@ export const basevalues = new Proxy({}, {
       });
     }
     
-    // スピンとステップシーケンス (オブジェクト形式でアクセス)
+    // Spins and step sequences (accessible as an object)
     if (['StSq', 'USp', 'LSp', 'CSp', 'SSp', 'CoSp'].includes(prop)) {
       return new Proxy({}, {
         get(target, level) {
