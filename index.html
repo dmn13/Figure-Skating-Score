@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Figure Skating Score — New UI Prototype</title>
+  <title>Figure Skating Score - New UI Prototype</title>
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -24,15 +24,17 @@
     .nav-pills .nav-link{ border-radius:999px; }
     .btn-check + .btn{ border-radius: 999px; }
     .section-title{ font-weight:600; font-size:1rem; color:#6c757d; }
-    /* 極小端末の詰め */
+    /* Small-screen spacing */
     @media (max-width: 360px){ .btn-sm{ padding:.25rem .45rem; font-size:.8rem; } }
   </style>
   <script>
-    // 簡易モック: プレビュー更新のみ（実計算は既存script.jsに委ね）
+    // Simple mock: only preview updates here (actual scoring logic is in script.js)
     document.addEventListener('DOMContentLoaded', () => {
+      const root = document.documentElement;
+      const themeToggle = document.getElementById('theme-toggle');
       const preview = document.getElementById('elemPreview');
-      // GOEはラジオボタン形式に変更
-      // PCS スライダーと表示バッジ
+      // GOE uses radio button inputs
+      // PCS sliders and value badges
       const pcsCo = document.getElementById('pcs-co');
       const pcsCoVal = document.getElementById('pcs-co-val');
       const pcsPr = document.getElementById('pcs-pr');
@@ -77,9 +79,9 @@
         preview.textContent = 'element';
       }
 
-      // GOEプレビュー表示は削除済み
+      // GOE preview display removed
 
-      // PCS数値の初期表示と更新
+      // Initialize and update PCS value badges
       const setBadge = (el, badge) => { if (el && badge) badge.textContent = Number(el.value).toFixed(2); };
       setBadge(pcsCo, pcsCoVal);
       setBadge(pcsPr, pcsPrVal);
@@ -98,26 +100,51 @@
         el.addEventListener('change', updatePreview);
       });
 
+      function applyTheme(theme){
+        const next = theme === 'dark' ? 'dark' : 'light';
+        root.setAttribute('data-bs-theme', next);
+        try { localStorage.setItem('ui-theme', next); } catch {}
+        if (themeToggle){
+          themeToggle.innerHTML = next === 'dark'
+            ? '<i class="bi bi-sun"></i> Light'
+            : '<i class="bi bi-moon-stars"></i> Dark';
+        }
+      }
+
+      const savedTheme = (() => {
+        try { return localStorage.getItem('ui-theme'); } catch { return null; }
+      })();
+      applyTheme(savedTheme || root.getAttribute('data-bs-theme') || 'light');
+
+      if (themeToggle){
+        themeToggle.addEventListener('click', () => {
+          const current = root.getAttribute('data-bs-theme') || 'light';
+          applyTheme(current === 'dark' ? 'light' : 'dark');
+        });
+      }
+
       updatePreview();
     });
   </script>
-  <!-- 既存アプリ接続時は、script.js/basevalues.jsへ差し替え可 -->
+  <!-- If integrating with the legacy app, replace with script.js/basevalues.js -->
 </head>
 <body>
-  <!-- ヘッダ/ナビ -->
+  <!-- Header / Navigation -->
   <nav class="navbar navbar-expand-md bg-body border-bottom sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><i class="bi bi-snow"></i><font _mstmutation="1"> Figure Skating Score (season 2025-2026)</font></a>
+      <a class="navbar-brand" href="#"><i class="bi bi-snow"></i> Figure Skating Score<br>(season 2025-26)</a>
       <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-outline-secondary" type="button" id="theme-toggle" aria-label="Toggle theme">
+          <i class="bi bi-moon-stars"></i> Dark</button>
         <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#help" aria-controls="help">
-          <i class="bi bi-question-circle"></i><font _mstmutation="1"> Help</font></button>
+          <i class="bi bi-question-circle"></i> Help</button>
       </div>
     </div>
   </nav>
 
   <main class="page container-fluid">
     <div class="row g-3">
-      <!-- 左: コンポーザ -->
+      <!-- Left: Composer -->
       <div class="col-12 col-lg-6">
         <div class="card shadow-sm">
           <div class="card-body">
@@ -128,7 +155,7 @@
               <div id="elemPreview">element</div>
             </div>
 
-            <!-- タブ: ジャンプ/スピン/シークエンス -->
+            <!-- Tabs: Jumps / Spins / Sequences -->
             <ul class="nav nav-pills my-3" id="pills-tab" role="tablist">
               <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="tab-jmp" data-bs-toggle="pill" data-bs-target="#pane-jmp" type="button" role="tab" aria-selected="true">Jumps</button>
@@ -142,14 +169,14 @@
             </ul>
 
             <div class="tab-content">
-              <!-- ジャンプ -->
+              <!-- Jumps -->
               <div class="tab-pane fade show active" id="pane-jmp" role="tabpanel" aria-labelledby="tab-jmp">
                 <div class="row g-3">
                   <div class="col-12">
                     <div class="text-secondary small mb-1">Rotations</div>
                     <div class="d-flex align-items-center">
-                      <div class="btn-group" role="group" aria-label="rotations" _mstaria-label="142272">
-                        <!-- 可用回転のみenabled（モック:全て有効） -->
+                      <div class="btn-group" role="group" aria-label="rotations">
+                        <!-- Only available rotations should be enabled (mock: all enabled) -->
                         <input class="btn-check" type="radio" name="rot" id="rot0" value="0"><label class="btn btn-outline-primary" for="rot0">0</label>
                         <input class="btn-check" type="radio" name="rot" id="rot1" value="1"><label class="btn btn-outline-primary" for="rot1">1</label>
                         <input class="btn-check" type="radio" name="rot" id="rot2" value="2"><label class="btn btn-outline-primary" for="rot2">2</label>
@@ -157,14 +184,14 @@
                         <input class="btn-check" type="radio" name="rot" id="rot4" value="4"><label class="btn btn-outline-primary" for="rot4">4</label>
                         <input class="btn-check" type="radio" name="rot" id="rot5" value="5"><label class="btn btn-outline-primary" for="rot5">5</label>
                       </div>
-                      <button id="btn-add-jump-top" class="btn btn-outline-primary btn-sm ms-2" aria-label="Jump added" _mstaria-label="14098864">
+                      <button id="btn-add-jump-top" class="btn btn-outline-primary btn-sm ms-2" aria-label="Jump added">
                         <i class="bi bi-plus-lg"></i>
                       </button>
                     </div>
                   </div>
                   <div class="col-12">
                     <div class="text-secondary small mb-1">Type</div>
-                    <div class="btn-group" role="group" aria-label="types" _mstaria-label="65819">
+                    <div class="btn-group" role="group" aria-label="types">
                       <input class="btn-check" type="radio" name="type" id="tA" value="A"><label class="btn btn-outline-primary" for="tA">A</label>
                       <input class="btn-check" type="radio" name="type" id="tT" value="T"><label class="btn btn-outline-primary" for="tT">T</label>
                       <input class="btn-check" type="radio" name="type" id="tS" value="S"><label class="btn btn-outline-primary" for="tS">S</label>
@@ -193,7 +220,7 @@
                   </div>
                   <div class="col-12">
                     <div class="text-secondary small mb-1">GOE</div>
-                    <div class="btn-group btn-group-sm goe-buttons" role="group" aria-label="GOE選択" _mstaria-label="8440848">
+                    <div class="btn-group btn-group-sm goe-buttons" role="group" aria-label="GOE selection">
                       <input type="radio" class="btn-check" name="goe" value="-5" id="goe-5">
                       <label class="btn btn-outline-danger" for="goe-5">-5</label>
                       
@@ -231,14 +258,14 @@
                 </div>
 
                 <div class="d-flex justify-content-between mt-3">
-                  <button class="btn btn-outline-danger" id="btn-clear-entry"><i class="bi bi-eraser"></i><font _mstmutation="1"> Clear Entry</font></button>
+                  <button class="btn btn-outline-danger" id="btn-clear-entry"><i class="bi bi-eraser"></i> Clear Entry</button>
                   <div class="btn-group">
-                    <button class="btn btn-primary" id="btn-add-element"><i class="bi bi-check2"></i><font _mstmutation="1"> Add Element</font></button>
+                    <button class="btn btn-primary" id="btn-add-element"><i class="bi bi-check2"></i> Add Element</button>
                 </div>
                 </div>
               </div>
 
-              <!-- スピン -->
+              <!-- Spins -->
               <div class="tab-pane fade" id="pane-spin" role="tabpanel" aria-labelledby="tab-spin">
                 <div class="text-secondary small mb-1">Type</div>
                 <div class="btn-group mb-2" role="group">
@@ -267,7 +294,7 @@
                 
                 <div class="mt-3">
                   <div class="text-secondary small mb-1">GOE</div>
-                  <div class="btn-group btn-group-sm goe-buttons" role="group" aria-label="GOE選択" _mstaria-label="8440848">
+                  <div class="btn-group btn-group-sm goe-buttons" role="group" aria-label="GOE selection">
                     <input type="radio" class="btn-check" name="goe-spin" value="-5" id="goe-spin-5">
                     <label class="btn btn-outline-danger" for="goe-spin-5">-5</label>
                     
@@ -304,14 +331,14 @@
                 </div>
                 
                 <div class="d-flex justify-content-between mt-3">
-                  <div></div>
+                  <button class="btn btn-outline-danger" id="btn-clear-entry-spin"><i class="bi bi-eraser"></i> Clear Entry</button>
                   <div class="btn-group">
-                    <button class="btn btn-primary" id="btn-add-spin"><i class="bi bi-check2"></i><font _mstmutation="1"> Add element</font></button>
+                    <button class="btn btn-primary" id="btn-add-spin"><i class="bi bi-check2"></i> Add element</button>
                   </div>
                 </div>
               </div>
 
-              <!-- シークエンス -->
+              <!-- Sequences -->
               <div class="tab-pane fade" id="pane-seq" role="tabpanel" aria-labelledby="tab-seq">
                 <div class="text-secondary small mb-1">Type</div>
                 <div class="btn-group mb-2" role="group">
@@ -334,7 +361,7 @@
                 
                 <div class="mt-3">
                   <div class="text-secondary small mb-1">GOE</div>
-                  <div class="btn-group btn-group-sm goe-buttons" role="group" aria-label="GOE selection" _mstaria-label="8440848">
+                  <div class="btn-group btn-group-sm goe-buttons" role="group" aria-label="GOE selection">
                     <input type="radio" class="btn-check" name="goe-seq" value="-5" id="goe-seq-5">
                     <label class="btn btn-outline-danger" for="goe-seq-5">-5</label>
                     
@@ -370,10 +397,10 @@
                   </div>
                 </div>
                 
-                <div class="d-flex justify-content-between mt-1">
-                  <div></div>
+                <div class="d-flex justify-content-between mt-3">
+                  <button class="btn btn-outline-danger" id="btn-clear-entry-seq"><i class="bi bi-eraser"></i> Clear Entry</button>
                   <div class="btn-group">
-                    <button class="btn btn-primary" id="btn-add-seq"><i class="bi bi-check2"></i><font _mstmutation="1"> Add element</font></button>
+                    <button class="btn btn-primary" id="btn-add-seq"><i class="bi bi-check2"></i> Add element</button>
                   </div>
                 </div>
               </div>
@@ -384,12 +411,26 @@
         <!-- PCS -->
         <div class="card shadow-sm mt-3">
           <div class="card-body">
+            <div class="input-group input-group-sm mb-2">
+              <span class="input-group-text">Factor</span>
+              <select class="form-select" id="pcs-factor-category">
+                <option value="men-sp" data-factor="1.67">Men SP (1.67)</option>
+                <option value="men-fs" data-factor="3.33">Men FS (3.33)</option>
+                <option value="women-sp" data-factor="1.33" selected>Women SP (1.33)</option>
+                <option value="women-fs" data-factor="2.67">Women FS (2.67)</option>
+                <option value="advanced-novice-boys-sp" data-factor="1.20">Advanced Novice Boys SP (1.20)</option>
+                <option value="advanced-novice-boys-fs" data-factor="2.40">Advanced Novice Boys FS (2.40)</option>
+                <option value="advanced-novice-girls-sp" data-factor="1.07">Advanced Novice Girls SP (1.07)</option>
+                <option value="advanced-novice-girls-fs" data-factor="2.13">Advanced Novice Girls FS (2.13)</option>
+                <option value="intermediate-novice-boys-fs" data-factor="2.00">Intermediate Novice Boys FS (2.00)</option>
+                <option value="intermediate-novice-girls-fs" data-factor="1.70">Intermediate Novice Girls FS (1.70)</option>
+                <option value="basic-novice-boys-girls-fs" data-factor="1.67">Basic Novice Boys/Girls FS (1.67)</option>
+                <option value="other">Other (manual)</option>
+              </select>
+              <input type="number" class="form-control" id="pcs-factor" value="1.33" step="0.01" min="0" style="max-width: 60px;" readonly>
+            </div>
             <div class="d-flex justify-content-between align-items-center mb-2">
               <div class="section-title">PCS</div>
-              <div class="input-group input-group-sm" style="width: 180px;">
-                <span class="input-group-text">Factor</span>
-                <input type="number" class="form-control" id="pcs-factor" value="1.33" step="0.01">
-              </div>
             </div>
             <div class="row g-3">
               <div class="col-12 col-sm-4">
@@ -418,7 +459,7 @@
         </div>
       </div>
 
-      <!-- 右: プログラム/スコア -->
+      <!-- Right: Program / Score -->
       <div class="col-12 col-lg-6">
         <div class="sticky-col">
           <div class="card shadow-sm mb-3">
@@ -476,11 +517,11 @@
     </div>
   </main>
 
-  <!-- ヘルプ -->
+  <!-- Help -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="help" aria-labelledby="helpLabel">
     <div class="offcanvas-header">
       <h5 id="helpLabel">Operation Tips</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" _mstaria-label="59709"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"</button>
     </div>
     <div class="offcanvas-body">
       <ul>
@@ -498,7 +539,7 @@
     const state = {
       buffer: [newPart()],
       elements: [],
-      pcs: { co: 0, pr: 0, ss: 0, factor: 1.67 },
+      pcs: { co: 0, pr: 0, ss: 0, factor: 1.33 },
       deduct: 0,
       editingIndex: null,
       isComboMode: false,
@@ -514,10 +555,10 @@
       const type = document.querySelector('input[name="type"]:checked')?.value;
       const rotRadios = [0,1,2,3,4,5].map(n=>document.getElementById('rot'+n));
 
-      // 一旦すべての回転数ボタンを有効化
+      // Enable all rotation buttons first
       rotRadios.forEach(r=>{ if(r) r.disabled = false; });
 
-      // ジャンプ種類が選択されている場合のみ制限を適用
+      // Apply restrictions only when a jump type is selected
       if (type){
         const avail = getAvailableRotationsFor(type);
         rotRadios.forEach((r,idx)=>{
@@ -526,7 +567,7 @@
         });
       }
 
-      // 5回転時はA無効
+      // Disable A when 5 rotations is selected
       const rot = document.querySelector('input[name="rot"]:checked')?.value;
       const aBtn = document.getElementById('tA');
       if (aBtn){ aBtn.disabled = (rot==='5'); }
@@ -540,7 +581,7 @@
 
     function isRenderablePart(p){
       if (!p || !p.type) return false;
-      if (p.type === 'jump') return !!p.name; // lodは0以外が望ましいが、表示上はnameがあれば十分
+      if (p.type === 'jump') return !!p.name; // lod other than 0 is preferred, but name alone is enough for rendering
       if (p.type === 'spin') return !!p.name;
       if (p.type === 'seq') return !!p.name;
       return false;
@@ -551,7 +592,7 @@
       const parts = deepClone(state.buffer);
       if (tab==='jump'){
         const selectedType = document.querySelector('input[name="type"]:checked');
-        // 最後のelementに現在の選択内容を反映
+        // Reflect current selection in the last element
         const p = parts[parts.length-1];
         p.type = 'jump';
         p.lod = document.querySelector('input[name="rot"]:checked')?.value || '0';
@@ -694,7 +735,7 @@
     }
 
     function renderPreview(){
-      // 現在のUI選択を反映したバッファを構築
+      // Build a buffer reflecting current UI selections
       const parts = buildBufferedParts();
       const validParts = parts.filter(isRenderablePart);
       let text = getElementDisplayText(validParts);
@@ -710,7 +751,7 @@
       }
       document.getElementById('elemPreview').textContent = text;
 
-      // GOE値プレビューは削除済み
+      // GOE value preview removed
     }
 
     function renderElements(){
@@ -752,7 +793,7 @@
         const parts = deepClone(state.elements[idx]);
         loadPartsIntoUI(parts);
       }));
-      // DnD
+      // Drag and drop
       const rows = tbody.querySelectorAll('tr');
       rows.forEach(r=>{
         r.addEventListener('dragstart', (ev)=>{
@@ -780,8 +821,46 @@
       document.getElementById('pcs-pr-val').textContent = pr.toFixed(2);
       document.getElementById('pcs-ss-val').textContent = ss.toFixed(2);
       state.pcs.co = co; state.pcs.pr = pr; state.pcs.ss = ss;
-      state.pcs.factor = Number(document.getElementById('pcs-factor').value||1.67);
+      state.pcs.factor = Number(document.getElementById('pcs-factor').value||1.33);
       updateTSS();
+    }
+
+    function updatePCSFactorFromCategory(){
+      const category = document.getElementById('pcs-factor-category');
+      const factorInput = document.getElementById('pcs-factor');
+      if (!category || !factorInput) return;
+
+      const selected = category.options[category.selectedIndex];
+      const isOther = category.value === 'other';
+      factorInput.disabled = false;
+      factorInput.readOnly = !isOther;
+      factorInput.toggleAttribute('readonly', !isOther);
+      factorInput.classList.toggle('bg-body-secondary', !isOther);
+
+      if (!isOther) {
+        const factor = Number(selected?.dataset?.factor);
+        if (!Number.isNaN(factor) && factor > 0) {
+          factorInput.value = factor.toFixed(2);
+        }
+      } else {
+        factorInput.focus();
+        factorInput.select();
+      }
+
+      updatePCSBadges();
+    }
+
+    function enableManualFactorEditing(){
+      const category = document.getElementById('pcs-factor-category');
+      const factorInput = document.getElementById('pcs-factor');
+      if (!category || !factorInput) return;
+      if (category.value !== 'other') {
+        category.value = 'other';
+      }
+      factorInput.disabled = false;
+      factorInput.readOnly = false;
+      factorInput.removeAttribute('readonly');
+      factorInput.classList.remove('bg-body-secondary');
     }
 
     function updateTSS(){
@@ -809,7 +888,7 @@
     }
 
     function addJumpToBuffer(){
-      // 現在のUI選択から新しいジャンプパートを作成
+      // Create a new jump part from current UI selections
       const newJump = newPart();
       newJump.type = 'jump';
       newJump.lod = document.querySelector('input[name="rot"]:checked')?.value || '0';
@@ -824,14 +903,14 @@
       newJump.bonus = document.getElementById('bonus').checked;
       newJump.goe = parseInt(document.querySelector('input[name="goe"]:checked')?.value)||0;
 
-      // 有効なジャンプのみバッファに追加
+      // Add to buffer only when the jump is valid
       if (newJump.name) {
-        // 最後のelementを確定させてプレースホルダーを追加
+        // Finalize the last element and append a placeholder
         state.buffer[state.buffer.length - 1] = newJump;
         state.buffer.push(newPart());
         state.isComboMode = true;
 
-        // 選択状態をリセットしプレビューを更新
+        // Reset selections and refresh preview
         resetSelections(false);
         renderPreview();
       }
@@ -839,19 +918,19 @@
 
     function clearEntry(){
       state.buffer = [newPart()];
-      state.isComboMode = false;  // 連続ジャンプモード解除
+      state.isComboMode = false;  // Exit combo jump mode
       resetSelections();
-      // GOE値プレビューは削除済み
+      // GOE value preview removed
     }
 
     function finalizeElementFromCurrentTab(){
-      // 現在のタブ状態からelementパーツを構築（ジャンプ/スピン/シーケンス対応）
+      // Build element parts from the active tab (jump/spin/sequence)
       const parts = buildBufferedParts();
 
-      // パーツが有効か検証
+      // Validate that the part is renderable
       if (!parts[0] || !isRenderablePart(parts[0])) return;
 
-      // 編集中なら差し替え、そうでなければ追加
+      // Replace if editing; otherwise append
       if (state.editingIndex != null) {
         state.elements[state.editingIndex] = parts;
         state.editingIndex = null;
@@ -873,16 +952,16 @@
     function loadPartsIntoUI(parts){
       if (!parts || parts.length === 0) return;
 
-      // 編集時はisComboModeをリセット（renderPreview関数内で自動判定）
+      // Reset combo mode while editing (renderPreview determines it automatically)
       state.isComboMode = false;
 
       const first = parts[0];
       if (first.type==='jump'){
         activateTab('jump');
-        // バッファそのものを反映
+        // Copy buffer as-is
         state.buffer = deepClone(parts);
         const last = state.buffer[state.buffer.length-1];
-        // UIを最後のパートでセット
+        // Set UI state from the last part
           if (last.lod) { const r = document.getElementById('rot'+last.lod); if (r) r.checked = true; }
           if (last.name) { const id = 't'+last.name; const t = document.getElementById(id); if (t) t.checked = true; }
           document.getElementById('flagUR').checked = !!last.ur;
@@ -897,16 +976,16 @@
         if (goeRadio) goeRadio.checked = true;
         updateRotationButtons();
         
-        // 編集時のプレビュー表示（連続ジャンプの場合のみ）
+        // Render preview while editing (only for jump combinations)
         const validBufferParts = state.buffer.filter(isRenderablePart);
         if (validBufferParts.length > 1) {
           renderPreview();
         } else {
-          // 単独ジャンプ編集時はプレビュー欄を空に
+          // For single-jump editing, leave preview empty
           document.getElementById('elemPreview').textContent = 'element';
         }
       } else if (first.type==='spin'){
-        // スピン・シーケンスは連続なし
+        // Spins and sequences do not use combinations
         state.isComboMode = false;
         activateTab('spin');
         state.buffer = deepClone(parts);
@@ -919,7 +998,7 @@
         document.getElementById('spINV').checked = !!p.invalid;
         const goeRadio = document.querySelector(`input[name="goe-spin"][value="${p.goe || 0}"]`);
         if (goeRadio) goeRadio.checked = true;
-        // プレビューなし（スピンは元々プレビュー機能が限定的）
+        // No preview (spin preview support is intentionally limited)
       } else if (first.type==='seq'){
         state.isComboMode = false;
         activateTab('seq');
@@ -930,28 +1009,30 @@
         document.getElementById('sqINV').checked = !!first.invalid;
         const goeRadio = document.querySelector(`input[name="goe-seq"][value="${first.goe || 0}"]`);
         if (goeRadio) goeRadio.checked = true;
-        // プレビューなし
+        // No preview
       }
     }
 
-    // wire events
+    // Wire events
     (async function(){
       await initSOV();
-      // rotation availability
+      // Rotation availability
       document.querySelectorAll('input[name="type"]').forEach(r=> r.addEventListener('change', updateRotationButtons));
       document.querySelectorAll('input[name="rot"]').forEach(r=> r.addEventListener('change', updateRotationButtons));
-      // GOEプレビュー表示のイベントリスナーは削除済み
+      // GOE preview event listeners removed
 
-      // ジャンプ入力変更時にプレビュー更新
+      // Refresh preview when jump inputs change
       document.querySelectorAll('#pane-jmp input').forEach(el => {
         el.addEventListener('input', renderPreview);
         el.addEventListener('change', renderPreview);
       });
 
-      // スピンとシーケンスはプレビュー機能を使用しない
+      // Spins and sequences do not use preview
 
       document.getElementById('btn-add-jump-top').addEventListener('click', addJumpToBuffer);
       document.getElementById('btn-clear-entry').addEventListener('click', clearEntry);
+      document.getElementById('btn-clear-entry-spin').addEventListener('click', clearEntry);
+      document.getElementById('btn-clear-entry-seq').addEventListener('click', clearEntry);
       document.getElementById('btn-add-element').addEventListener('click', finalizeElementFromCurrentTab);
       document.getElementById('btn-add-spin').addEventListener('click', finalizeElementFromCurrentTab);
       document.getElementById('btn-add-seq').addEventListener('click', finalizeElementFromCurrentTab);
@@ -959,16 +1040,21 @@
       document.getElementById('pcs-co').addEventListener('input', updatePCSBadges);
       document.getElementById('pcs-pr').addEventListener('input', updatePCSBadges);
       document.getElementById('pcs-ss').addEventListener('input', updatePCSBadges);
+      document.getElementById('pcs-factor-category').addEventListener('change', updatePCSFactorFromCategory);
+      document.getElementById('pcs-factor-category').addEventListener('input', updatePCSFactorFromCategory);
       document.getElementById('pcs-factor').addEventListener('input', updatePCSBadges);
+      document.getElementById('pcs-factor').addEventListener('focus', enableManualFactorEditing);
+      document.getElementById('pcs-factor').addEventListener('click', enableManualFactorEditing);
       document.getElementById('deduct').addEventListener('input', updateTSS);
 
       updateRotationButtons();
-      // 初期状態はプレビュー欄を空欄に設定
+      // Initialize preview area as empty
       document.getElementById('elemPreview').textContent = 'element';
-      // GOEプレビュー表示は削除済み
-      updatePCSBadges();
+      // GOE preview display removed
+      updatePCSFactorFromCategory();
     })();
   </script>
 </body>
+<p><small> version 1.1.0 &centerdot; <a href="https://github.com/dmn13/Figure-Skating-Score">GitHub</a></small></p>
 <!-- This HTML is the main UI (migrated from ui_prototype). -->
 </html>
