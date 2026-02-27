@@ -1,4 +1,4 @@
-// ES Modules インポート
+// ES Modules import
 import { initSOV, getBase, getScore, getAvailableRotationsFor } from './basevalues.js';
 
 var buffer = [{
@@ -32,12 +32,12 @@ var pcsTotal = 0.0;
 var tss = 0.0;
 var deduct = 0.0;
 
-// 追加済み要素の配列（1行=bufferのスナップショット）
+// Array of added elements (each row is a snapshot of the buffer)
 var elements = [];
-// 編集中の行インデックス（null のときは新規追加）
+// Index of the row being edited (null means new addition)
 var editingIndex = null;
 
-// ESM 非同期初期化対応
+// ESM async initialization support
 document.addEventListener('DOMContentLoaded', async function() {
   try {
     console.log('Starting SOV initialization...');
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('Application initialized successfully');
   } catch (error) {
     console.error('Failed to initialize:', error);
-    alert('データの読み込みに失敗しました。ページを再読み込みしてください。\n詳細: ' + error.message);
+    alert('Failed to load data. Please reload the page.\nDetails: ' + error.message);
   }
 });
 
@@ -88,18 +88,18 @@ function initApp(){
   $("#pcs-in-slider").on("change input click", updateIN)
   $("#pcs-factor-box").on("change keyup paste click", updateFactor)
 
-  // 並べ替え（D&D）イベントを設定
+  // Set up sorting (drag & drop) events
   setupDragAndDrop();
-  // 行の編集/削除（委譲）
+  // Row edit/delete (delegation)
   $(document).on('click', '.delete', onDeleteRow);
   $(document).on('click', '.edit', onEditRow);
 }
 
-// 動的回転数制御関数
+// Dynamic rotation control function
 function updateRotationButtons(jumpType) {
   const rotationButtons = $("#nav-jmp .setLOD button");
 
-  // ジャンプ種類が未選択のときは全ての回転数を選択可能にする
+  // If jump type not selected, allow all rotation options
   if (!jumpType) {
     rotationButtons.prop("disabled", false);
     return;
@@ -108,10 +108,10 @@ function updateRotationButtons(jumpType) {
   try {
     const availableRotations = getAvailableRotationsFor(jumpType);
 
-    // すべて無効化
+    // Disable all
     rotationButtons.prop("disabled", true);
 
-    // 利用可能な回転数のボタンを有効化
+    // Enable buttons for available rotations
     rotationButtons.each(function(index) {
       const rotation = parseInt($(this).text());
       if (availableRotations.includes(rotation)) {
@@ -119,7 +119,7 @@ function updateRotationButtons(jumpType) {
       }
     });
 
-    // 0回転は常に有効
+    // Zero rotation is always enabled
     rotationButtons.eq(0).prop("disabled", false);
   } catch (error) {
     console.warn('Error updating rotation buttons:', error);
@@ -136,7 +136,7 @@ function updateTSS(){
   $("#tss").html(tss.toFixed(2));
 }
 
-// 要素配列からテーブルを再描画
+// Re-render table from elements array
 function renderElements(){
   const $tbody = $(".displayTable");
   let html = "";
@@ -151,11 +151,11 @@ function renderElements(){
     html += `<td>${res.goe}</td>`;
     html += `<td>${res.goeValue.toFixed(2)}</td>`;
     html += `<td class="elemScore">${res.totalScore.toFixed(2)}</td>`;
-    html += `<td>` +
-            `<i title="並べ替え" class="handle fas fa-grip-lines mr-2"></i>` +
-            `<i title="編集" class="edit far fa-edit mr-2"></i>` +
-            `<i title="削除" class="delete far fa-trash-alt"></i>` +
-            `</td>`;
+        html += `<td>` +
+          `<i title="Sort" class="handle fas fa-grip-lines mr-2"></i>` +
+          `<i title="Edit" class="edit far fa-edit mr-2"></i>` +
+          `<i title="Delete" class="delete far fa-trash-alt"></i>` +
+          `</td>`;
     html += `</tr>`;
   }
   $tbody.html(html);
@@ -266,11 +266,11 @@ function setType(node){
     $("#nav-sp-tab").addClass("disabled");
     $("#nav-seq-tab").addClass("disabled");
     
-    // ジャンプの種類に応じて動的に回転数ボタンを制御
+      // Dynamically control rotation buttons according to jump type
     const jumpType = buffer[buffer.length - 1].name;
     updateRotationButtons(jumpType);
     
-    // 5回転選択時にAボタンを無効化
+      // Disable 'A' button when 5 rotations are selected
     const rotation = buffer[buffer.length - 1].lod;
     if (rotation === "5") {
       $("#nav-jmp .setType button").each(function() {
@@ -297,7 +297,7 @@ function setType(node){
     $("#nav-seq .setLOD button:eq(2)").prop("disabled", false);
   }
   
-  // 旧来のEu固定制御は削除し、動的制御に統合済み
+  // Old Eu fixed-control removed; merged into dynamic control
 
   if (buffer[buffer.length - 1].name === "ChSq" || buffer[buffer.length - 1].name === "Eu"){
     if(buffer[buffer.length - 1].lod != "0" && buffer[buffer.length - 1].lod != "1" ){
@@ -334,7 +334,7 @@ function setType(node){
 function setLOD(){
   buffer[buffer.length - 1].lod = $(this).html();
   
-  // 5回転選択時にAボタンを無効化
+  // Disable 'A' button when 5 rotations are selected
   if ($(this).html() === "5") {
     $("#nav-jmp .setName button").each(function() {
       if ($(this).text() === "A") {
@@ -342,7 +342,7 @@ function setLOD(){
       }
     });
   } else {
-    // 5回転以外の場合はAボタンを有効化
+    // Enable 'A' button when rotation is not 5
     $("#nav-jmp .setName button").each(function() {
       if ($(this).text() === "A") {
         $(this).prop("disabled", false);
@@ -455,8 +455,8 @@ function addJump(){
 
 function renderBufferedElement(){
   elementDisplay.html("");
-  if (buffer[0].name === null && buffer[0].lod == 0){
-    elementDisplay.append("要素");
+    if (buffer[0].name === null && buffer[0].lod == 0){
+    elementDisplay.append("element");
   }
 
   for (var i = 0; i < buffer.length; i++){
@@ -569,20 +569,20 @@ function clearEntry() {
   $(".addElement").prop("disabled", true);
   $(".addJump").prop("disabled", true);
   $(".setEdge").prop("disabled", true);
-  $("#elem-disp").html("要素");
+  $("#elem-disp").html("element");
   $("#goeDisplay").html("GOE");
   $(".setSpinV").prop("disabled", false);
 
 
   //setType();
 
-  // 編集状態のリセット
+  // Reset edit state
   editingIndex = null;
-  $(".addElement").text("要素を追加");
+  $(".addElement").text("Add element");
 }
 
 function addElement(){
-  // 現在のbufferをスナップショット
+  // Snapshot the current buffer
   const snapshot = JSON.parse(JSON.stringify(buffer));
 
   if (editingIndex !== null){
@@ -591,7 +591,7 @@ function addElement(){
     elements.push(snapshot);
   }
 
-  // テーブル再描画と再計算
+  // Re-render table and recalculate
   renderElements();
   updateTSS();
   clearEntry();
@@ -728,7 +728,7 @@ function updateTES(){
   tes = Math.round(totalScore * 1000 / 10) / 100
 }
 
-// 行編集開始（編集アイコン）
+// Begin row edit (edit icon)
 function onEditRow(){
   const idx = parseInt($(this).closest('tr').data('index'));
   if (isNaN(idx)) return;
@@ -736,7 +736,7 @@ function onEditRow(){
   buffer.length = 0;
   for (const p of snapshot){ buffer.push(p); }
   editingIndex = idx;
-  $(".addElement").prop("disabled", false).text("要素を更新");
+  $(".addElement").prop("disabled", false).text("Update element");
   $(".addJump").prop("disabled", false);
   $("#nav-jmp .setLOD button").prop("disabled", false);
   $("#nav-seq .setLOD button").prop("disabled", false);
@@ -744,7 +744,7 @@ function onEditRow(){
   renderBufferedElement();
 }
 
-// 並べ替え（D&D）
+// Sorting (drag & drop)
 function setupDragAndDrop(){
   const tbody = document.querySelector('.displayTable');
   if (!tbody) return;
@@ -772,7 +772,7 @@ function setupDragAndDrop(){
   });
 }
 
-// 既存buffer配列に依存せず、行の得点を計算
+// Compute row score without relying on the existing buffer array
 function computeElementResult(parts){
   const local = JSON.parse(JSON.stringify(parts));
   let sumBVForScore = 0.0;
@@ -826,14 +826,14 @@ function computeElementResult(parts){
       }
     }
 
-    // score用係数
+    // Coefficients for score calculation
     p.bvForScoreCalculation = p.bv;
     if (local[0].bonus === true){ p.bvForScoreCalculation *= 1.1; }
     if (p.rep === true){ p.bvForScoreCalculation *= 0.7; }
     if (p.spinV === true){ p.bvForScoreCalculation *= 0.75; }
     sumBVForScore += p.bvForScoreCalculation;
 
-    // GOE用係数
+    // Coefficients for GOE
     p.bvForGOECalculation = p.bv;
     if (p.spinV === true){ p.bvForGOECalculation *= 0.75; }
     p.bvForGOECalculation = Math.round(p.bvForGOECalculation * 1000 / 10) / 100;
@@ -864,7 +864,7 @@ function computeElementResult(parts){
   return { totalBV, goe, goeValue, totalScore };
 }
 
-// 表示用文字列の生成（DOMに依存しない）
+// Generate display string (DOM-independent)
 function getElementDisplayText(parts){
   let out = "";
   for (let i = 0; i < parts.length; i++){
@@ -896,7 +896,7 @@ function getElementDisplayText(parts){
   return out;
 }
 
-// 削除（委譲）
+// Delete (delegation)
 function onDeleteRow(){
   const idx = parseInt($(this).closest('tr').data('index'));
   if (!isNaN(idx)){
